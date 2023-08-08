@@ -10,11 +10,11 @@ import { unknownError } from "../lang/common/errors";
 const errorLog: debug.IDebugger = debug("errorHandler:err");
 
 export const helpersErrorHandler = (
-    err: any, // any???
+    err: unknown,
     customErrorMessage: string, 
     errorLog: debug.IDebugger
 ) => {
-    errorLog(err?.message);
+    if(err instanceof Error) errorLog(err?.message);
     const customError = !(err instanceof CustomError)
         ? new CustomError({ code: StatusCodes.INTERNAL_SERVER_ERROR, message: customErrorMessage })
         : err;
@@ -22,14 +22,14 @@ export const helpersErrorHandler = (
 }
 
 export const controllersErrorHandler = (
-    err: any, // any???
+    err: unknown,
     customErrorMessage: string, 
     next: CustomNext, 
     errorLog: debug.IDebugger
 ) => {
-    errorLog(err?.message);
+    if(err instanceof Error) errorLog(err?.message);
     const customError = !(err instanceof CustomError)
-        ? new CustomError({ code: StatusCodes.INTERNAL_SERVER_ERROR, message: customErrorMessage })
+        ? new CustomError({ code: StatusCodes.INTERNAL_SERVER_ERROR, message: customErrorMessage})
         : err;
     next(customError);
 }
@@ -40,7 +40,7 @@ export const defaultErrorHandler = (
     res: Response,
     next: CustomNext
 ) => {
-    errorLog("global error handler:", err, err.code);
+    errorLog(err?.message);
 
     res.status((err && err.code) || StatusCodes.INTERNAL_SERVER_ERROR).json({
         message: (err && err.message) || unknownError,
