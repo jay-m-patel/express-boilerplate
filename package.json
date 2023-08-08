@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node -r source-map-support/register dist/server.js",
     "dev": "nodemon src/server.ts",
-    "build": "tsc -p ."
+    "build": "npm install && tsc -p ."
   },
   "author": "",
   "license": "ISC",
